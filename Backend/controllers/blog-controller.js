@@ -86,6 +86,9 @@ module.exports.deleteBlog = async(req, res, next) => {
     let blog;
     try {
         blog = await Blog.findByIdAndDelete(blogId).populate('user');
+        if(!blog) {
+            return res.status(404).json({message: 'Blog with given id does not exist'});
+        }
         await blog.user.blogs.pull(blog);
         await blog.user.save();
     }catch(err) {
